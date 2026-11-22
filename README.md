@@ -28,9 +28,13 @@ A creative-commerce website for books, stationery, school supplies, personalised
 
 ## Important: Live Supabase project is NOT connected yet
 
-The connected Supabase organisation has two active Free projects for other applications. To avoid touching existing apps or starting an unapproved bill, a dedicated Pusthaya project has **not** been created. Do not claim this code is deployed or a real checkout is available.
+The user selected **DasuniPathirana's Org** (organization ID `axilwxaxxhqipxptegsk`) for a completely separate Pusthaya project in region `ap-south-1` (Mumbai). The quoted project cost was `$0/month` and the user approved it.
 
-When a dedicated Pusthaya project is approved:
+**Creation status (2026-11-22): blocked, not created.** Supabase rejected the attempt because the account is an Owner/Administrator of two active Free projects across organizations. This is an *account-wide* limit, despite the destination organization having an available local slot. No charge was made. **Do not create or link Pusthaya to the 9 Gens organization, and do not modify projects there.** Do not claim the application is deployed or live checkout works.
+
+The next step requires the user to resolve the Free project limit through a change they approve (e.g. upgrading the separate Pusthaya organization to a paid plan, or managing other free-project ownership/availability). Never perform a paid-plan action without explicit consent.
+
+Once a dedicated Pusthaya project exists:
 
 1. Create the Supabase project and confirm it is `ACTIVE_HEALTHY`.
 2. Review `supabase/schema.sql` and apply it using the SQL editor or the Supabase database migration workflow.
