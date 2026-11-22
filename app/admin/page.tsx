@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Admin(){return <><p className="eyebrow">ADMIN OVERVIEW</p><h1 className="page-title">Your workspace.</h1><p className="lede">Manage your store content, requests and collections.</p><div className="admin-shortcuts"><Link href="/admin/categories">Categories</Link><Link href="/admin/menus">Menus</Link><Link href="/admin/products">Products</Link><Link href="/admin/quotations">Quotations</Link></div></>}
