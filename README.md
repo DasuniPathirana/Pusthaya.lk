@@ -1,23 +1,54 @@
-# Pusthaya.lk — Next.js + Supabase starter
+# Pusthaya.lk
 
-Official repository for pusthaya.lk. The customer website and role-protected admin dashboard use one Next.js application.
+A creative-commerce website for Sri Lankan books, stationery, school supplies, personalised gifts, printing and universal quotations.
 
-## Stack
-Next.js 16, React 19, TypeScript, custom CSS and Supabase (Postgres, Auth, RLS). Hosting target: Cloudflare Workers.
+## Architecture
 
-## Setup
-1. Install Node.js and run `npm install`.
-2. Copy `.env.example` to `.env.local` and populate the Supabase project URL and publishable key.
-3. Review and execute `supabase/schema.sql` in a **new** Supabase project's SQL Editor.
-4. Run `npm run dev` and open http://localhost:3000.
-5. Sign up through /sign-in, confirm email if enabled, find the new auth user UUID in the Supabase dashboard and execute the Owner bootstrap SQL described in the schema (replace the placeholder with the actual UUID).
-6. Visit /admin to manage categories and menus.
+- **Next.js 16 + React + TypeScript**, one app for the storefront and admin
+- **Supabase PostgreSQL + Auth + Row Level Security**
+- Planned hosting: **Cloudflare Workers** after the Next.js compatibility build is validated
+- Light editorial design with richer orange, pink, blue and navy accents
 
-## Security
-Never commit service-role or secret keys. Newly registered users receive customer access. Owner assignment is deliberately manual until a server-verified staff invitation and role-assignment flow is implemented. Database policies, not client-side visibility, enforce permissions.
+## Implemented on the develop branch
 
-## Status and limitations
-Early foundation, not production-ready. Implemented: homepage, browse published products, grade links, account sign-in/register, quotation creation, protected admin dashboard, basic category/menu creation and visibility controls, quotation inbox. Still required: product editor, order/cart/checkout, actual payments, customer account pages, file uploads, admin role invitation workflow, SMTP emails, rate limits, reliable session refresh, Cloudflare deployment adapter and production testing.
+- Responsive customer homepage, shop and school-grade links
+- Database-driven navigation menus and homepage categories
+- Category-filtered product listings
+- Email/password account creation and sign-in
+- Supabase cookie-based session refresh
+- Admin routes protected by server-side user-role checks
+- Owner-only staff role assignment screen, enforced by PostgreSQL RLS
+- Admin category and menu addition/visibility
+- Admin product create/edit/publish/delete
+- Universal quotation submission and staff quotation inbox
+- Database schema and initial menu/category seed data
 
-## Development
-The `develop` branch contains implementation work; `main` remains the stable baseline.
+## Local setup
+
+1. Install Node.js, clone this repository, and check out `develop`.
+2. Run `npm install` and commit the resulting lockfile.
+3. Create a NEW Supabase project for Pusthaya.lk; do not reuse another application's database.
+4. Review `supabase/schema.sql` and execute it once in the new project's SQL editor.
+5. Copy `.env.example` to `.env.local` and supply the project's Supabase URL and **publishable** key.
+6. Run `npm run dev`, then visit `http://localhost:3000`.
+7. Sign up an Owner account, verify the email, and get that user's UUID from Supabase Authentication.
+8. Bootstrap the first Owner **manually in the Supabase SQL editor**:
+   `update public.user_roles set role='owner' where user_id='REPLACE_WITH_AUTH_USER_UUID';`
+9. Sign back in and visit `/admin/users` to assign other users' roles.
+
+Never expose a Supabase secret/service-role key in client-side code. Never paste credentials into a GitHub issue or commit them.
+
+## Roles
+- Owner: all administrative data and user-role assignments
+- Manager: categories, menus, products, quotations
+- Editor: categories, menus and products
+- Fulfilment: quotations
+- Customer: own quotation submissions
+
+Role decisions are enforced in SQL, not just by hiding UI links.
+
+## Still to build before launch
+
+Cart, order processing, checkout, verified payment callbacks, inventory reservations, product image uploads, complete gift builder, persistent quote replies, customer order history, email deliverability, rate limiting, automated tests, a reproducible lockfile, and Cloudflare production deployment. The first code commit has **not yet passed an npm build**. Live business operations must not use this starter until deployment and security testing are complete.
+
+The `main` branch remains the initial stable placeholder. Active implementation is on `develop`.
