@@ -88,3 +88,10 @@ create policy "quotations staff update" on public.quotations for update to authe
 -- FIRST OWNER BOOTSTRAP (run manually in SQL editor after signing up):
 -- update public.user_roles set role='owner' where user_id = 'ACTUAL-OWNER-AUTH-UUID';
 -- Never grant owner role based on an email supplied by the browser.
+
+-- Only an existing Owner can change the role of another account.
+-- Do not allow an Owner to demote their own session accidentally.
+create policy "roles owner update staff" on public.user_roles
+for update to authenticated
+using (private.has_role(array['owner']) and user_id <> (select auth.uid()))
+with check (private.has_role(array['owner']) and user_id <> (select auth.uid()));
