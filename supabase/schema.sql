@@ -95,3 +95,15 @@ create policy "roles owner update staff" on public.user_roles
 for update to authenticated
 using (private.has_role(array['owner']) and user_id <> (select auth.uid()))
 with check (private.has_role(array['owner']) and user_id <> (select auth.uid()));
+
+-- Initial editable storefront navigation.
+insert into public.navigation_items(label,href,location,sort_order) values
+ ('Shop','/shop','header',10),
+ ('School books','/books','header',20),
+ ('Custom quotations','/quotes','both',30);
+-- Initial categories, editable from Admin > Categories.
+insert into public.categories(name,slug,description,accent,sort_order) values
+ ('School books','school-books','Grades 1 to 13 and Cambridge','#DDE7F7',10),
+ ('Stationery','stationery','For work and study','#F6E2C9',20),
+ ('Gifts and packs','gifts','Personalised gifts and packs','#F3D9E5',30),
+ ('Printing','printing','Printing and finishing services','#D8EBE7',40);
