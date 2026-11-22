@@ -1,54 +1,67 @@
 # Pusthaya.lk
 
-A creative-commerce website for Sri Lankan books, stationery, school supplies, personalised gifts, printing and universal quotations.
+A creative-commerce website for books, stationery, school supplies, personalised gifts, printing and custom quotations.
 
-## Architecture
+## Stack
 
-- **Next.js 16 + React + TypeScript**, one app for the storefront and admin
-- **Supabase PostgreSQL + Auth + Row Level Security**
-- Planned hosting: **Cloudflare Workers** after the Next.js compatibility build is validated
-- Light editorial design with richer orange, pink, blue and navy accents
+- Next.js 16.4.6, React 19.3.1, TypeScript
+- Supabase PostgreSQL, Auth and Row Level Security
+- Planned low-cost hosting: Cloudflare Workers
+- One application for public storefront and role-based admin
 
-## Implemented on the develop branch
+## Implemented on `develop`
 
-- Responsive customer homepage, shop and school-grade links
-- Database-driven navigation menus and homepage categories
-- Category-filtered product listings
-- Email/password account creation and sign-in
-- Supabase cookie-based session refresh
-- Admin routes protected by server-side user-role checks
-- Owner-only staff role assignment screen, enforced by PostgreSQL RLS
-- Admin category and menu addition/visibility
-- Admin product create/edit/publish/delete
-- Universal quotation submission and staff quotation inbox
-- Database schema and initial menu/category seed data
+- Responsive light professional homepage
+- Database-driven main navigation and homepage category sections
+- Published product listing and category filtering
+- Sign-up and sign-in using Supabase Auth
+- Role-protected admin for products, categories, menus, quotations and Owner-only role changes
+- Product creation, editing, publishing and removal
+- Customer quotation submission for any type of product or service
+- **Shopping bag with add, update quantity and remove**
+- **Guest bag persisted in browser localStorage**
+- **Signed-in bag persisted in Supabase `cart_items` with ownership RLS**
+- Guest bag merged into signed-in bag after authentication
+- Out-of-stock and quote-only products are not addable
+- Cart total displayed as an estimate, not a final charge
+- CI workflow to typecheck/build on pushes (a passing run has not been verified)
 
-## Local setup
+## Important: Live Supabase project is NOT connected yet
 
-1. Install Node.js, clone this repository, and check out `develop`.
-2. Run `npm install` and commit the resulting lockfile.
-3. Create a NEW Supabase project for Pusthaya.lk; do not reuse another application's database.
-4. Review `supabase/schema.sql` and execute it once in the new project's SQL editor.
-5. Copy `.env.example` to `.env.local` and supply the project's Supabase URL and **publishable** key.
-6. Run `npm run dev`, then visit `http://localhost:3000`.
-7. Sign up an Owner account, verify the email, and get that user's UUID from Supabase Authentication.
-8. Bootstrap the first Owner **manually in the Supabase SQL editor**:
-   `update public.user_roles set role='owner' where user_id='REPLACE_WITH_AUTH_USER_UUID';`
-9. Sign back in and visit `/admin/users` to assign other users' roles.
+The connected Supabase organisation has two active Free projects for other applications. To avoid touching existing apps or starting an unapproved bill, a dedicated Pusthaya project has **not** been created. Do not claim this code is deployed or a real checkout is available.
 
-Never expose a Supabase secret/service-role key in client-side code. Never paste credentials into a GitHub issue or commit them.
+When a dedicated Pusthaya project is approved:
 
-## Roles
-- Owner: all administrative data and user-role assignments
-- Manager: categories, menus, products, quotations
-- Editor: categories, menus and products
-- Fulfilment: quotations
-- Customer: own quotation submissions
+1. Create the Supabase project and confirm it is `ACTIVE_HEALTHY`.
+2. Review `supabase/schema.sql` and apply it using the SQL editor or the Supabase database migration workflow.
+3. Review `supabase/cart.sql` and apply it after the main schema.
+4. Copy `.env.example` to `.env.local` and provide the project URL and **publishable** key.
+5. Install dependencies with `npm install`, commit `package-lock.json`, run `npm run typecheck` and `npm run build`.
+6. Sign up the first real Owner and verify the user's email if required.
+7. Bootstrap the first Owner **manually** using the actual Auth UUID:
+   `update public.user_roles set role='owner' where user_id='ACTUAL_AUTH_USER_UUID';`
+8. Test roles and cart RLS with separate customer accounts. Visit `/admin/users` to assign staff.
+9. Test cart add, quantity change, remove, logout, sign-in, merging and simultaneous accounts.
 
-Role decisions are enforced in SQL, not just by hiding UI links.
+## How the cart works
 
-## Still to build before launch
+- **Guest:** Cart items are saved locally on the current device, so they do not follow the customer across devices until sign-in.
+- **Signed-in:** Cart items are stored in `public.cart_items`, keyed by `(user_id,product_id)`; RLS restricts access to the signed-in account.
+- **Merge:** Signing in attempts to merge guest items into the account cart after rechecking product availability, price and stock; it clears local data only after successful writes.
+- **Prices:** The UI shows an estimate based on current catalogue prices for signed-in users. Checkout must calculate authoritative totals in a trusted backend transaction and enforce stock availability.
+- **Product availability:** Quote-only items, draft items and items without stock cannot be added from the shop.
+- **Status:** No payment gateway, checkout processing, inventory reservation or real order placement yet.
 
-Cart, order processing, checkout, verified payment callbacks, inventory reservations, product image uploads, complete gift builder, persistent quote replies, customer order history, email deliverability, rate limiting, automated tests, a reproducible lockfile, and Cloudflare production deployment. The first code commit has **not yet passed an npm build**. Live business operations must not use this starter until deployment and security testing are complete.
+## Remaining production requirements
 
-The `main` branch remains the initial stable placeholder. Active implementation is on `develop`.
+- A dedicated Supabase project and actual migration/security policy testing
+- Secure product-image upload, storage policies and asset optimisation
+- Complete checkout and atomic stock reservation
+- Payment gateway callbacks with signature verification
+- Customer order history, delivery charges and fulfilment
+- Upload attachments, quote replies and notifications
+- Rate limiting and anti-spam
+- Verified CI build, reproducible package lockfile and browser tests
+- Cloudflare Workers preview and production deployment
+
+All new work is on `develop`. `main` is the stable placeholder and must not be used for orders or payments yet.
